@@ -1,6 +1,7 @@
 package com.fiap.spring_mongo_db.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,8 @@ public record Artigo(
         LocalDateTime data,
         String texto,
         String url,
-        Integer status
+        Integer status,
+        @DBRef
+        Autor autor
 ) {
 }

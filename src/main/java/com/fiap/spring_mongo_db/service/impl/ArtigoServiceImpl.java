@@ -1,7 +1,8 @@
-package com.fiap.spring_mongo_db.service;
+package com.fiap.spring_mongo_db.service.impl;
 
 import com.fiap.spring_mongo_db.model.Artigo;
 import com.fiap.spring_mongo_db.repository.ArtigoRepository;
+import com.fiap.spring_mongo_db.service.ArtigoService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
