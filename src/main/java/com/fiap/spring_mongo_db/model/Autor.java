@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public record Autor(
         @Id
         String codigo,
-        String name,
+        String nome,
         String biografia,
         String imagem
 ) {
