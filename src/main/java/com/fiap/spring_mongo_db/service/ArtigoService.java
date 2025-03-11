@@ -15,4 +15,8 @@ public interface ArtigoService {
     List<Artigo> obterPorDataMaiorQue(LocalDateTime data);
 
     List<Artigo> obterPorDataEStatus(LocalDateTime data, Integer status);
+
+    void atualizar(Artigo artigoAtualizado);
+
+    void atualizarArtigoUrl(String id, String novaUrl);
 }

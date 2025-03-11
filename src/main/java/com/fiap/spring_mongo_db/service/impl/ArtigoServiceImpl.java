@@ -7,6 +7,7 @@ import com.fiap.spring_mongo_db.service.ArtigoService;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -63,12 +64,24 @@ public class ArtigoServiceImpl implements ArtigoService {
 
     @Override
     public List<Artigo> obterPorDataEStatus(final LocalDateTime data, final Integer status) {
-        final var criteria = Criteria.where("data")
-                .gt(data)
-                .and("status")
-                .is(status);
-
-        final var query = new Query(criteria);
+        final var query = new Query(
+                Criteria.where("data")
+                        .gt(data)
+                        .and("status")
+                        .is(status)
+        );
         return mongoTemplate.find(query, Artigo.class);
+    }
+
+    @Override
+    public void atualizar(final Artigo artigoAtualizado) {
+        artigoRepository.save(artigoAtualizado);
+    }
+
+    @Override
+    public void atualizarArtigoUrl(final String id, final String novaUrl) {
+        final var query = new Query(Criteria.where("_id").is(id));
+        final var update = new Update().set("url", novaUrl);
+        mongoTemplate.updateFirst(query, update, Artigo.class);
     }
 }
