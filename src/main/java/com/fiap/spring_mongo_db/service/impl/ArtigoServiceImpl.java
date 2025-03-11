@@ -4,8 +4,12 @@ import com.fiap.spring_mongo_db.model.Artigo;
 import com.fiap.spring_mongo_db.repository.ArtigoRepository;
 import com.fiap.spring_mongo_db.repository.AutorRepository;
 import com.fiap.spring_mongo_db.service.ArtigoService;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -14,10 +18,16 @@ import static java.util.Objects.nonNull;
 public class ArtigoServiceImpl implements ArtigoService {
     private final ArtigoRepository artigoRepository;
     private final AutorRepository autorRepository;
+    private final MongoTemplate mongoTemplate;
 
-    public ArtigoServiceImpl(ArtigoRepository artigoRepository, AutorRepository autorRepository) {
+    public ArtigoServiceImpl(
+            ArtigoRepository artigoRepository,
+            AutorRepository autorRepository,
+            MongoTemplate mongoTemplate
+    ) {
         this.artigoRepository = artigoRepository;
         this.autorRepository = autorRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -43,5 +53,22 @@ public class ArtigoServiceImpl implements ArtigoService {
         }
 
         return artigoRepository.save(artigo);
+    }
+
+    @Override
+    public List<Artigo> obterPorDataMaiorQue(final LocalDateTime data) {
+        final var query = new Query(Criteria.where("data").gt(data));
+        return mongoTemplate.find(query, Artigo.class);
+    }
+
+    @Override
+    public List<Artigo> obterPorDataEStatus(final LocalDateTime data, final Integer status) {
+        final var criteria = Criteria.where("data")
+                .gt(data)
+                .and("status")
+                .is(status);
+
+        final var query = new Query(criteria);
+        return mongoTemplate.find(query, Artigo.class);
     }
 }
