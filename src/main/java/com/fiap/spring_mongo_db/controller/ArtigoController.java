@@ -71,4 +71,12 @@ public class ArtigoController {
     public void deletarArtigo(@PathVariable final String codigo) {
         service.deletarArtigo(codigo);
     }
+
+    @GetMapping("/por-status-e-data-maior")
+    public List<Artigo> findByStatusAndDataGreatherThan(
+            @RequestParam("data") final LocalDateTime data,
+            @RequestParam("status") final Integer status
+    ) {
+        return service.findByStatusAndDataGreaterThan(status, data);
+    }
 }

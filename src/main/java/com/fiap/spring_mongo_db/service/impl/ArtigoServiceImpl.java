@@ -95,4 +95,9 @@ public class ArtigoServiceImpl implements ArtigoService {
         final var query = new Query(Criteria.where("_id").is(codigo));
         mongoTemplate.remove(query, Artigo.class);
     }
+
+    @Override
+    public List<Artigo> findByStatusAndDataGreaterThan(final Integer status, final LocalDateTime data) {
+        return artigoRepository.findByStatusAndDataGreaterThan(status, data);
+    }
 }
