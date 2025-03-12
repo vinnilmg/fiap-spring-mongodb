@@ -2,6 +2,7 @@ package com.fiap.spring_mongo_db.controller;
 
 import com.fiap.spring_mongo_db.model.Artigo;
 import com.fiap.spring_mongo_db.service.ArtigoService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,5 +60,15 @@ public class ArtigoController {
     @PutMapping("/{codigo}")
     public void atualizarUrl(@PathVariable final String codigo, @RequestBody final String url) {
         service.atualizarArtigoUrl(codigo, url);
+    }
+
+    @DeleteMapping("/{codigo}")
+    public void deletar(@PathVariable final String codigo) {
+        service.deletar(codigo);
+    }
+
+    @DeleteMapping("/delete/{codigo}")
+    public void deletarArtigo(@PathVariable final String codigo) {
+        service.deletarArtigo(codigo);
     }
 }

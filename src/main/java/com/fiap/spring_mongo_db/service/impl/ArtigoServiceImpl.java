@@ -84,4 +84,15 @@ public class ArtigoServiceImpl implements ArtigoService {
         final var update = new Update().set("url", novaUrl);
         mongoTemplate.updateFirst(query, update, Artigo.class);
     }
+
+    @Override
+    public void deletar(final String codigo) {
+        artigoRepository.deleteById(codigo);
+    }
+
+    @Override
+    public void deletarArtigo(final String codigo) {
+        final var query = new Query(Criteria.where("_id").is(codigo));
+        mongoTemplate.remove(query, Artigo.class);
+    }
 }

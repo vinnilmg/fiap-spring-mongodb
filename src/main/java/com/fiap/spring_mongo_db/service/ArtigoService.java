@@ -19,4 +19,8 @@ public interface ArtigoService {
     void atualizar(Artigo artigoAtualizado);
 
     void atualizarArtigoUrl(String id, String novaUrl);
+
+    void deletar(String codigo);
+
+    void deletarArtigo(String codigo);
 }
