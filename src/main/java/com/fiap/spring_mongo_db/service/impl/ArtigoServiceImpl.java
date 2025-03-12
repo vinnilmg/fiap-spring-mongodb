@@ -100,4 +100,9 @@ public class ArtigoServiceImpl implements ArtigoService {
     public List<Artigo> findByStatusAndDataGreaterThan(final Integer status, final LocalDateTime data) {
         return artigoRepository.findByStatusAndDataGreaterThan(status, data);
     }
+
+    @Override
+    public List<Artigo> findByDataBetween(final LocalDateTime de, final LocalDateTime ate) {
+        return artigoRepository.findByDataBetween(de, ate);
+    }
 }

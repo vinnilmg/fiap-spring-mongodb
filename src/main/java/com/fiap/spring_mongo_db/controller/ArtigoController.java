@@ -79,4 +79,12 @@ public class ArtigoController {
     ) {
         return service.findByStatusAndDataGreaterThan(status, data);
     }
+
+    @GetMapping("/por-periodo")
+    public List<Artigo> findByDataBetween(
+            @RequestParam("de") final LocalDateTime de,
+            @RequestParam("ate") final LocalDateTime ate
+    ) {
+        return service.findByDataBetween(de, ate);
+    }
 }
