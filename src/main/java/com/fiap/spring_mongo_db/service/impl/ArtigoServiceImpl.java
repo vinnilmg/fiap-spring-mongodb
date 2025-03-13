@@ -105,4 +105,25 @@ public class ArtigoServiceImpl implements ArtigoService {
     public List<Artigo> findByDataBetween(final LocalDateTime de, final LocalDateTime ate) {
         return artigoRepository.findByDataBetween(de, ate);
     }
+
+    @Override
+    public List<Artigo> encontrarArtigosComplexos(
+            final Integer status,
+            final LocalDateTime data,
+            final String titulo
+    ) {
+        final var criteria = new Criteria();
+        criteria.and("data").lte(data);
+
+        if (nonNull(status)) {
+            criteria.and("status").is(status);
+        }
+
+        if (nonNull(titulo) && !titulo.isEmpty()) {
+            criteria.and("titulo").regex(titulo, "i");
+        }
+
+        final var query = new Query(criteria);
+        return mongoTemplate.find(query, Artigo.class);
+    }
 }

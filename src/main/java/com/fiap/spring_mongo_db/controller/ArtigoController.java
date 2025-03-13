@@ -87,4 +87,13 @@ public class ArtigoController {
     ) {
         return service.findByDataBetween(de, ate);
     }
+
+    @GetMapping("/artigo-complexo")
+    public List<Artigo> encontrarArtigosComplexos(
+            @RequestParam(required = false) final Integer status,
+            @RequestParam final LocalDateTime data,
+            @RequestParam(required = false) final String titulo
+    ) {
+        return service.encontrarArtigosComplexos(status, data, titulo);
+    }
 }

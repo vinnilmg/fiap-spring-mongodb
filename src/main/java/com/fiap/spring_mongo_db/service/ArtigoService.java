@@ -27,4 +27,6 @@ public interface ArtigoService {
     List<Artigo> findByStatusAndDataGreaterThan(Integer status, LocalDateTime data);
 
     List<Artigo> findByDataBetween(LocalDateTime de, LocalDateTime ate);
+
+    List<Artigo> encontrarArtigosComplexos(Integer status, LocalDateTime data, String titulo);
 }
