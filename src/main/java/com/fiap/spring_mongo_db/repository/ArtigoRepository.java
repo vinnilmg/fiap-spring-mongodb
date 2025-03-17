@@ -18,4 +18,9 @@ public interface ArtigoRepository extends MongoRepository<Artigo, String> {
     List<Artigo> findByDataBetween(LocalDateTime de, LocalDateTime ate);
 
     Page<Artigo> findAll(Pageable pageable);
+
+    List<Artigo> findByStatusOrderByTituloAsc(Integer status);
+
+    @Query(value = "{ 'status': { $eq: ?0 } }", sort = "{ 'titulo': -1 }")
+    List<Artigo> findByStatusOrderByTituloDesc(Integer status);
 }

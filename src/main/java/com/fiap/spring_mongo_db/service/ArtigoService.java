@@ -33,4 +33,8 @@ public interface ArtigoService {
     List<Artigo> encontrarArtigosComplexos(Integer status, LocalDateTime data, String titulo);
 
     Page<Artigo> findAllWithPagination(Pageable pageable);
+
+    List<Artigo> findByStatusOrderByTituloAsc(Integer status);
+
+    List<Artigo> findByStatusOrderByTituloDesc(Integer status);
 }
