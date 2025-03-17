@@ -115,4 +115,10 @@ public class ArtigoController {
     public List<Artigo> findByStatusOrderByTituloDesc(@RequestParam(required = false) final Integer status) {
         return service.findByStatusOrderByTituloDesc(status);
     }
+
+    @GetMapping("/paginacao-e-ordenacao")
+    public ResponseEntity<Page<Artigo>> findAllWithPaginationAndSort(final Pageable pageable) {
+        final var artigos = service.findAllWithPaginationAndSort(pageable);
+        return ResponseEntity.ok(artigos);
+    }
 }

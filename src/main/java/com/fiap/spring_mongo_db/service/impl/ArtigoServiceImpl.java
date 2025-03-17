@@ -5,7 +5,9 @@ import com.fiap.spring_mongo_db.repository.ArtigoRepository;
 import com.fiap.spring_mongo_db.repository.AutorRepository;
 import com.fiap.spring_mongo_db.service.ArtigoService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -142,5 +144,12 @@ public class ArtigoServiceImpl implements ArtigoService {
     @Override
     public List<Artigo> findByStatusOrderByTituloDesc(Integer status) {
         return artigoRepository.findByStatusOrderByTituloDesc(status);
+    }
+
+    @Override
+    public Page<Artigo> findAllWithPaginationAndSort(final Pageable pageable) {
+        final var sort = Sort.by("titulo").ascending();
+        final var pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return artigoRepository.findAll(pageableWithSort);
     }
 }
