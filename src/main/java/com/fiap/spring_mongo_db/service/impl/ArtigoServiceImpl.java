@@ -4,6 +4,8 @@ import com.fiap.spring_mongo_db.model.Artigo;
 import com.fiap.spring_mongo_db.repository.ArtigoRepository;
 import com.fiap.spring_mongo_db.repository.AutorRepository;
 import com.fiap.spring_mongo_db.service.ArtigoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -125,5 +127,10 @@ public class ArtigoServiceImpl implements ArtigoService {
 
         final var query = new Query(criteria);
         return mongoTemplate.find(query, Artigo.class);
+    }
+
+    @Override
+    public Page<Artigo> findAllWithPagination(final Pageable pageable) {
+        return artigoRepository.findAll(pageable);
     }
 }
