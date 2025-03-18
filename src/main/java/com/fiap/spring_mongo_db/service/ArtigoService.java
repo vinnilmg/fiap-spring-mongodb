@@ -39,4 +39,6 @@ public interface ArtigoService {
     List<Artigo> findByStatusOrderByTituloDesc(Integer status);
 
     Page<Artigo> findAllWithPaginationAndSort(Pageable pageable);
+
+    List<Artigo> findByTexto(String searchTerm);
 }

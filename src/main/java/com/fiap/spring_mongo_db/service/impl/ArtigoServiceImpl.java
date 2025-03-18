@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
@@ -151,5 +153,17 @@ public class ArtigoServiceImpl implements ArtigoService {
         final var sort = Sort.by("titulo").ascending();
         final var pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return artigoRepository.findAll(pageableWithSort);
+    }
+
+    @Override
+    public List<Artigo> findByTexto(final String searchTerm) {
+        // Para filtrar por termos em um texto
+        final var criteria = TextCriteria.forDefaultLanguage()
+                .matchingPhrase(searchTerm);
+
+        final var query = TextQuery.queryText(criteria)
+                .sortByScore();
+
+        return mongoTemplate.find(query, Artigo.class);
     }
 }

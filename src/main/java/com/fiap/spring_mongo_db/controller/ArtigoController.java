@@ -121,4 +121,9 @@ public class ArtigoController {
         final var artigos = service.findAllWithPaginationAndSort(pageable);
         return ResponseEntity.ok(artigos);
     }
+
+    @GetMapping("/termo")
+    public List<Artigo> findByTexto(@RequestParam final String searchTerm) {
+        return service.findByTexto(searchTerm);
+    }
 }
