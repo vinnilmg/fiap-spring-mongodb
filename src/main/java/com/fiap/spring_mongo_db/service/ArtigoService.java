@@ -1,6 +1,7 @@
 package com.fiap.spring_mongo_db.service;
 
 import com.fiap.spring_mongo_db.model.Artigo;
+import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -41,4 +42,6 @@ public interface ArtigoService {
     Page<Artigo> findAllWithPaginationAndSort(Pageable pageable);
 
     List<Artigo> findByTexto(String searchTerm);
+
+    List<ArtigoStatusCount> contarArtigosPorStatus();
 }

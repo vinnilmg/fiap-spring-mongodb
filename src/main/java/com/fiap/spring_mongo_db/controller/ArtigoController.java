@@ -1,6 +1,7 @@
 package com.fiap.spring_mongo_db.controller;
 
 import com.fiap.spring_mongo_db.model.Artigo;
+import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
 import com.fiap.spring_mongo_db.service.ArtigoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -125,5 +126,10 @@ public class ArtigoController {
     @GetMapping("/termo")
     public List<Artigo> findByTexto(@RequestParam final String searchTerm) {
         return service.findByTexto(searchTerm);
+    }
+
+    @GetMapping("/contar-por-status")
+    public List<ArtigoStatusCount> contarArtigosPorStatus() {
+        return service.contarArtigosPorStatus();
     }
 }

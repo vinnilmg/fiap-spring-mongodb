@@ -1,6 +1,7 @@
 package com.fiap.spring_mongo_db.service.impl;
 
 import com.fiap.spring_mongo_db.model.Artigo;
+import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
 import com.fiap.spring_mongo_db.repository.ArtigoRepository;
 import com.fiap.spring_mongo_db.repository.AutorRepository;
 import com.fiap.spring_mongo_db.service.ArtigoService;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
@@ -165,5 +167,21 @@ public class ArtigoServiceImpl implements ArtigoService {
                 .sortByScore();
 
         return mongoTemplate.find(query, Artigo.class);
+    }
+
+    @Override
+    public List<ArtigoStatusCount> contarArtigosPorStatus() {
+        final var aggregation = Aggregation.newAggregation(
+                Artigo.class,
+                Aggregation.group("status")
+                        .count()
+                        .as("quantidade"),
+                Aggregation.project("quantidade")
+                        .and("status")
+                        .previousOperation()
+        );
+
+        final var result = mongoTemplate.aggregate(aggregation, ArtigoStatusCount.class);
+        return result.getMappedResults();
     }
 }
