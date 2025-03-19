@@ -2,6 +2,7 @@ package com.fiap.spring_mongo_db.controller;
 
 import com.fiap.spring_mongo_db.model.Artigo;
 import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
+import com.fiap.spring_mongo_db.model.ArtigosPorAutorCount;
 import com.fiap.spring_mongo_db.service.ArtigoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -131,5 +133,13 @@ public class ArtigoController {
     @GetMapping("/contar-por-status")
     public List<ArtigoStatusCount> contarArtigosPorStatus() {
         return service.contarArtigosPorStatus();
+    }
+
+    @GetMapping("/contar-por-autor-no-periodo")
+    public List<ArtigosPorAutorCount> contarArtigosPorAutorNoPeriodo(
+            @RequestParam final LocalDate dataInicio,
+            @RequestParam final LocalDate dataFim
+    ) {
+        return service.contarArtigosPorAutorNoPeriodo(dataInicio, dataFim);
     }
 }

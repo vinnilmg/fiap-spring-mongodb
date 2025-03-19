@@ -2,6 +2,7 @@ package com.fiap.spring_mongo_db.service.impl;
 
 import com.fiap.spring_mongo_db.model.Artigo;
 import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
+import com.fiap.spring_mongo_db.model.ArtigosPorAutorCount;
 import com.fiap.spring_mongo_db.repository.ArtigoRepository;
 import com.fiap.spring_mongo_db.repository.AutorRepository;
 import com.fiap.spring_mongo_db.service.ArtigoService;
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -182,6 +184,30 @@ public class ArtigoServiceImpl implements ArtigoService {
         );
 
         final var result = mongoTemplate.aggregate(aggregation, ArtigoStatusCount.class);
+        return result.getMappedResults();
+    }
+
+    @Override
+    public List<ArtigosPorAutorCount> contarArtigosPorAutorNoPeriodo(
+            final LocalDate dataInicio,
+            final LocalDate dataFim
+    ) {
+        final var aggregation = Aggregation.newAggregation(
+                Artigo.class,
+                Aggregation.match(
+                        Criteria.where("data")
+                                .gte(dataInicio.atStartOfDay())
+                                .lt(dataFim.plusDays(1).atStartOfDay())
+                ),
+                Aggregation.group("autor")
+                        .count()
+                        .as("totalArtigos"),
+                Aggregation.project("totalArtigos")
+                        .and("autor")
+                        .previousOperation()
+        );
+
+        final var result = mongoTemplate.aggregate(aggregation, ArtigosPorAutorCount.class);
         return result.getMappedResults();
     }
 }
