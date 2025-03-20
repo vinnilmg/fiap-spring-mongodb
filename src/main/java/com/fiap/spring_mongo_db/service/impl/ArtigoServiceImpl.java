@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,12 +47,14 @@ public class ArtigoServiceImpl implements ArtigoService {
         return artigoRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Artigo obterPorCodigo(final String codigo) {
         return artigoRepository.findById(codigo)
                 .orElseThrow(() -> new IllegalArgumentException("Artigo não existe"));
     }
 
+    @Transactional
     @Override
     public Artigo criar(final Artigo artigo) {
         if (nonNull(artigo.getAutor().codigo())) {
@@ -83,11 +86,13 @@ public class ArtigoServiceImpl implements ArtigoService {
         return mongoTemplate.find(query, Artigo.class);
     }
 
+    @Transactional
     @Override
     public void atualizar(final Artigo artigoAtualizado) {
         artigoRepository.save(artigoAtualizado);
     }
 
+    @Transactional
     @Override
     public void atualizarArtigoUrl(final String id, final String novaUrl) {
         final var query = new Query(Criteria.where("_id").is(id));
@@ -95,11 +100,13 @@ public class ArtigoServiceImpl implements ArtigoService {
         mongoTemplate.updateFirst(query, update, Artigo.class);
     }
 
+    @Transactional
     @Override
     public void deletar(final String codigo) {
         artigoRepository.deleteById(codigo);
     }
 
+    @Transactional
     @Override
     public void deletarArtigo(final String codigo) {
         final var query = new Query(Criteria.where("_id").is(codigo));
