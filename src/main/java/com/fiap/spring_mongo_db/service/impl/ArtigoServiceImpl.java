@@ -6,6 +6,7 @@ import com.fiap.spring_mongo_db.model.ArtigosPorAutorCount;
 import com.fiap.spring_mongo_db.repository.ArtigoRepository;
 import com.fiap.spring_mongo_db.repository.AutorRepository;
 import com.fiap.spring_mongo_db.service.ArtigoService;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -89,7 +90,18 @@ public class ArtigoServiceImpl implements ArtigoService {
     @Transactional
     @Override
     public void atualizar(final Artigo artigoAtualizado) {
-        artigoRepository.save(artigoAtualizado);
+        try {
+            artigoRepository.save(artigoAtualizado);
+        } catch (OptimisticLockingFailureException e) {
+            final var artigoExistente = artigoRepository.findById(artigoAtualizado.getCodigo())
+                    .orElseThrow(() -> new IllegalArgumentException("Artigo não localizado: " + artigoAtualizado.getCodigo()));
+
+            artigoExistente.setTitulo(artigoAtualizado.getTitulo());
+            artigoExistente.setTexto(artigoAtualizado.getTexto());
+            artigoExistente.setStatus(artigoAtualizado.getStatus());
+            artigoExistente.setVersion(artigoExistente.getVersion() + 1);
+            artigoRepository.save(artigoAtualizado);
+        }
     }
 
     @Transactional
