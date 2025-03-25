@@ -3,7 +3,8 @@ package com.fiap.spring_mongo_db.controller;
 import com.fiap.spring_mongo_db.model.Artigo;
 import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
 import com.fiap.spring_mongo_db.model.ArtigosPorAutorCount;
-import com.fiap.spring_mongo_db.service.ArtigoService;
+import com.fiap.spring_mongo_db.service.ArtigoWithMongoTemplateService;
+import com.fiap.spring_mongo_db.service.ArtigoWithRepositoryService;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,10 +28,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/artigos")
 public class ArtigoController {
-    private final ArtigoService service;
+    private final ArtigoWithRepositoryService artigoWithRepositoryService;
+    private final ArtigoWithMongoTemplateService artigoWithMongoTemplateService;
 
-    public ArtigoController(ArtigoService service) {
-        this.service = service;
+    public ArtigoController(
+            ArtigoWithRepositoryService artigoWithRepositoryService,
+            ArtigoWithMongoTemplateService artigoWithMongoTemplateService
+    ) {
+        this.artigoWithRepositoryService = artigoWithRepositoryService;
+        this.artigoWithMongoTemplateService = artigoWithMongoTemplateService;
     }
 
     @ExceptionHandler(OptimisticLockingFailureException.class)
@@ -43,22 +49,22 @@ public class ArtigoController {
 
     @GetMapping
     public List<Artigo> obterTodos() {
-        return service.obterTodos();
+        return artigoWithRepositoryService.obterTodos();
     }
 
     @GetMapping("/{codigo}")
     public Artigo obterPorCodigo(@PathVariable final String codigo) {
-        return service.obterPorCodigo(codigo);
+        return artigoWithRepositoryService.obterPorCodigo(codigo);
     }
 
     @PostMapping
     public Artigo criar(@RequestBody final Artigo artigo) {
-        return service.criar(artigo);
+        return artigoWithRepositoryService.criar(artigo);
     }
 
     @GetMapping("/por-data")
     public List<Artigo> obterPorDataMaiorQue(@RequestParam("data") final LocalDateTime data) {
-        return service.obterPorDataMaiorQue(data);
+        return artigoWithMongoTemplateService.obterPorDataMaiorQue(data);
     }
 
     @GetMapping("/por-data-e-status")
@@ -66,27 +72,27 @@ public class ArtigoController {
             @RequestParam("data") final LocalDateTime data,
             @RequestParam("status") final Integer status
     ) {
-        return service.obterPorDataEStatus(data, status);
+        return artigoWithMongoTemplateService.obterPorDataEStatus(data, status);
     }
 
     @PutMapping
     public void atualizar(@RequestBody final Artigo artigo) {
-        service.atualizar(artigo);
+        artigoWithRepositoryService.atualizar(artigo);
     }
 
     @PutMapping("/{codigo}")
     public void atualizarUrl(@PathVariable final String codigo, @RequestBody final String url) {
-        service.atualizarArtigoUrl(codigo, url);
+        artigoWithMongoTemplateService.atualizarArtigoUrl(codigo, url);
     }
 
     @DeleteMapping("/{codigo}")
     public void deletar(@PathVariable final String codigo) {
-        service.deletar(codigo);
+        artigoWithRepositoryService.deletar(codigo);
     }
 
     @DeleteMapping("/delete/{codigo}")
     public void deletarArtigo(@PathVariable final String codigo) {
-        service.deletarArtigo(codigo);
+        artigoWithMongoTemplateService.deletarArtigo(codigo);
     }
 
     @GetMapping("/por-status-e-data-maior")
@@ -94,7 +100,7 @@ public class ArtigoController {
             @RequestParam("data") final LocalDateTime data,
             @RequestParam("status") final Integer status
     ) {
-        return service.findByStatusAndDataGreaterThan(status, data);
+        return artigoWithRepositoryService.findByStatusAndDataGreaterThan(status, data);
     }
 
     @GetMapping("/por-periodo")
@@ -102,7 +108,7 @@ public class ArtigoController {
             @RequestParam("de") final LocalDateTime de,
             @RequestParam("ate") final LocalDateTime ate
     ) {
-        return service.findByDataBetween(de, ate);
+        return artigoWithRepositoryService.findByDataBetween(de, ate);
     }
 
     @GetMapping("/artigo-complexo")
@@ -111,39 +117,39 @@ public class ArtigoController {
             @RequestParam final LocalDateTime data,
             @RequestParam(required = false) final String titulo
     ) {
-        return service.encontrarArtigosComplexos(status, data, titulo);
+        return artigoWithMongoTemplateService.encontrarArtigosComplexos(status, data, titulo);
     }
 
     @GetMapping("/paginacao")
     public ResponseEntity<Page<Artigo>> findAllWithPagination(final Pageable pageable) {
-        final var artigos = service.findAllWithPagination(pageable);
+        final var artigos = artigoWithRepositoryService.findAllWithPagination(pageable);
         return ResponseEntity.ok(artigos);
     }
 
     @GetMapping("/ordenado-por-titulo")
     public List<Artigo> findByStatusOrderByTituloAsc(@RequestParam(required = false) final Integer status) {
-        return service.findByStatusOrderByTituloAsc(status);
+        return artigoWithRepositoryService.findByStatusOrderByTituloAsc(status);
     }
 
     @GetMapping("/ordenado-por-titulo-desc")
     public List<Artigo> findByStatusOrderByTituloDesc(@RequestParam(required = false) final Integer status) {
-        return service.findByStatusOrderByTituloDesc(status);
+        return artigoWithRepositoryService.findByStatusOrderByTituloDesc(status);
     }
 
     @GetMapping("/paginacao-e-ordenacao")
     public ResponseEntity<Page<Artigo>> findAllWithPaginationAndSort(final Pageable pageable) {
-        final var artigos = service.findAllWithPaginationAndSort(pageable);
+        final var artigos = artigoWithRepositoryService.findAllWithPaginationAndSort(pageable);
         return ResponseEntity.ok(artigos);
     }
 
     @GetMapping("/termo")
     public List<Artigo> findByTexto(@RequestParam final String searchTerm) {
-        return service.findByTexto(searchTerm);
+        return artigoWithMongoTemplateService.findByTexto(searchTerm);
     }
 
     @GetMapping("/contar-por-status")
     public List<ArtigoStatusCount> contarArtigosPorStatus() {
-        return service.contarArtigosPorStatus();
+        return artigoWithMongoTemplateService.contarArtigosPorStatus();
     }
 
     @GetMapping("/contar-por-autor-no-periodo")
@@ -151,6 +157,6 @@ public class ArtigoController {
             @RequestParam final LocalDate dataInicio,
             @RequestParam final LocalDate dataFim
     ) {
-        return service.contarArtigosPorAutorNoPeriodo(dataInicio, dataFim);
+        return artigoWithMongoTemplateService.contarArtigosPorAutorNoPeriodo(dataInicio, dataFim);
     }
 }
