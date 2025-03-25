@@ -3,6 +3,7 @@ package com.fiap.spring_mongo_db.service;
 import com.fiap.spring_mongo_db.model.Artigo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +14,8 @@ public interface ArtigoWithRepositoryService {
     Artigo obterPorCodigo(String codigo);
 
     Artigo criar(Artigo artigo);
+
+    ResponseEntity<?> criarArtigo(Artigo artigo);
 
     void atualizar(Artigo artigoAtualizado);
 

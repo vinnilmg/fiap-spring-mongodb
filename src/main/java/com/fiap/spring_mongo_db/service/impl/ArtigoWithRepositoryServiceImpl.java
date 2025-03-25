@@ -4,11 +4,14 @@ import com.fiap.spring_mongo_db.model.Artigo;
 import com.fiap.spring_mongo_db.repository.ArtigoRepository;
 import com.fiap.spring_mongo_db.repository.AutorRepository;
 import com.fiap.spring_mongo_db.service.ArtigoWithRepositoryService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +58,30 @@ public class ArtigoWithRepositoryServiceImpl implements ArtigoWithRepositoryServ
         }
 
         return artigoRepository.save(artigo);
+    }
+
+    @Override
+    public ResponseEntity<?> criarArtigo(final Artigo artigo) {
+        if (nonNull(artigo.getAutor().codigo())) {
+            final var autor = autorRepository.findById(artigo.getAutor().codigo())
+                    .orElseThrow(() -> new IllegalArgumentException("Autor nao existe"));
+
+            artigo.setAutor(autor);
+        } else {
+            artigo.setAutor(null);
+        }
+
+        try {
+            artigoRepository.save(artigo);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .build();
+        } catch (DuplicateKeyException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Artigo já existe");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Erro ao criar artigo: " + e.getMessage());
+        }
     }
 
     @Transactional

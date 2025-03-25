@@ -62,6 +62,11 @@ public class ArtigoController {
         return artigoWithRepositoryService.criar(artigo);
     }
 
+    @PostMapping("/criar")
+    public ResponseEntity<?> criarArtigo(@RequestBody final Artigo artigo) {
+        return artigoWithRepositoryService.criarArtigo(artigo);
+    }
+
     @GetMapping("/por-data")
     public List<Artigo> obterPorDataMaiorQue(@RequestParam("data") final LocalDateTime data) {
         return artigoWithMongoTemplateService.obterPorDataMaiorQue(data);
