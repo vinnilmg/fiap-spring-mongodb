@@ -5,14 +5,13 @@ import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
 import com.fiap.spring_mongo_db.model.ArtigosPorAutorCount;
 import com.fiap.spring_mongo_db.service.ArtigoWithMongoTemplateService;
 import com.fiap.spring_mongo_db.service.ArtigoWithRepositoryService;
+import com.fiap.spring_mongo_db.service.impl.ArtigoWithMongoTemplateServiceImpl;
+import com.fiap.spring_mongo_db.service.impl.ArtigoWithRepositoryServiceImpl;
 import jakarta.validation.Valid;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,19 +32,11 @@ public class ArtigoController {
     private final ArtigoWithMongoTemplateService artigoWithMongoTemplateService;
 
     public ArtigoController(
-            ArtigoWithRepositoryService artigoWithRepositoryService,
-            ArtigoWithMongoTemplateService artigoWithMongoTemplateService
+            ArtigoWithRepositoryServiceImpl artigoWithRepositoryService,
+            ArtigoWithMongoTemplateServiceImpl artigoWithMongoTemplateService
     ) {
         this.artigoWithRepositoryService = artigoWithRepositoryService;
         this.artigoWithMongoTemplateService = artigoWithMongoTemplateService;
-    }
-
-    @ExceptionHandler(OptimisticLockingFailureException.class)
-    public ResponseEntity<String> handleOptimisticLockingFailureException(
-            final OptimisticLockingFailureException exception
-    ) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body("Erro de concorrência: O artigo está sendo utilizado por outro usuário");
     }
 
     @GetMapping
