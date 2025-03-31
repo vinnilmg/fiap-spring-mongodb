@@ -1,5 +1,7 @@
 package com.fiap.spring_mongo_db.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.TextIndexed;
@@ -12,14 +14,25 @@ import java.time.LocalDateTime;
 public class Artigo {
     @Id
     private String codigo;
+
+    @NotBlank(message = "O título do artigo não pode estar em branco.")
     private String titulo;
+
+    @NotNull(message = "A data do artigo não ser nula.")
     private LocalDateTime data;
+
+    @NotBlank(message = "O texto do artigo não pode estar em branco.")
     @TextIndexed
     private String texto;
+
     private String url;
+
+    @NotNull(message = "O status do artigo não ser nulo.")
     private Integer status;
+
     @DBRef
     private Autor autor;
+
     @Version
     private Long version;
 

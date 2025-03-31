@@ -5,6 +5,7 @@ import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
 import com.fiap.spring_mongo_db.model.ArtigosPorAutorCount;
 import com.fiap.spring_mongo_db.service.ArtigoWithMongoTemplateService;
 import com.fiap.spring_mongo_db.service.ArtigoWithRepositoryService;
+import jakarta.validation.Valid;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -88,7 +89,7 @@ public class ArtigoController {
     @PutMapping("/atualizar/{codigo}")
     public ResponseEntity<?> atualizarArtigo(
             @PathVariable final String codigo,
-            @RequestBody final Artigo artigo
+            @Valid @RequestBody final Artigo artigo
     ) {
         return artigoWithRepositoryService.atualizarArtigo(codigo, artigo);
     }
