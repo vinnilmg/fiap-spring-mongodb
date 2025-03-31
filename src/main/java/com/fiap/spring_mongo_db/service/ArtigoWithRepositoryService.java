@@ -19,6 +19,8 @@ public interface ArtigoWithRepositoryService {
 
     void atualizar(Artigo artigoAtualizado);
 
+    ResponseEntity<?> atualizarArtigo(String id, Artigo artigo);
+
     void deletar(String codigo);
 
     List<Artigo> findByStatusAndDataGreaterThan(Integer status, LocalDateTime data);

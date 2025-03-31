@@ -85,6 +85,14 @@ public class ArtigoController {
         artigoWithRepositoryService.atualizar(artigo);
     }
 
+    @PutMapping("/atualizar/{codigo}")
+    public ResponseEntity<?> atualizarArtigo(
+            @PathVariable final String codigo,
+            @RequestBody final Artigo artigo
+    ) {
+        return artigoWithRepositoryService.atualizarArtigo(codigo, artigo);
+    }
+
     @PutMapping("/{codigo}")
     public void atualizarUrl(@PathVariable final String codigo, @RequestBody final String url) {
         artigoWithMongoTemplateService.atualizarArtigoUrl(codigo, url);

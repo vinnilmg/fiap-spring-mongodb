@@ -101,6 +101,30 @@ public class ArtigoWithRepositoryServiceImpl implements ArtigoWithRepositoryServ
         }
     }
 
+    @Override
+    public ResponseEntity<?> atualizarArtigo(final String id, final Artigo artigo) {
+        try {
+            final var artigoExistente = artigoRepository.findById(id);
+
+            if (artigoExistente.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Artigo não localizado");
+            }
+
+            final var artigoToUpdate = artigoExistente.get();
+            artigoToUpdate.setTitulo(artigo.getTitulo());
+            artigoToUpdate.setTexto(artigo.getTexto());
+            artigoToUpdate.setData(artigo.getData());
+            artigoRepository.save(artigoToUpdate);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Erro ao atualizar artigo: " + e.getMessage());
+        }
+    }
+
     @Transactional
     @Override
     public void deletar(final String codigo) {
