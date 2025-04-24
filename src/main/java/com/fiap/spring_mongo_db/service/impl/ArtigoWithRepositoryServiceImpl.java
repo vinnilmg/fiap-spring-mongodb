@@ -171,25 +171,41 @@ public class ArtigoWithRepositoryServiceImpl implements ArtigoWithRepositoryServ
 
     @Override
     public ResponseEntity<?> criarArtigoComAutor(final Artigo artigo, final Autor autor) {
-        final var transaction = new TransactionTemplate(transactionManager);
+        return new TransactionTemplate(transactionManager)
+                .execute(status -> {
+                    try {
+                        autorRepository.save(autor);
 
-        return transaction.execute(status -> {
-            try {
-                autorRepository.save(autor);
+                        artigo.setData(LocalDateTime.now());
+                        artigo.setAutor(autor);
 
-                artigo.setData(LocalDateTime.now());
-                artigo.setAutor(autor);
+                        artigoRepository.save(artigo);
 
-                artigoRepository.save(artigo);
+                        return ResponseEntity.status(HttpStatus.CREATED)
+                                .build();
+                    } catch (Exception e) {
+                        // Realiza o rollback caso ocorra um erro
+                        status.setRollbackOnly();
 
-                return ResponseEntity.status(HttpStatus.CREATED)
-                        .build();
-            } catch (Exception e) {
-                // Realiza o rollback caso ocorra um erro
-                status.setRollbackOnly();
+                        throw new RuntimeException("Erro ao criar um artigo com autor: " + e.getMessage());
+                    }
+                });
+    }
 
-                throw new RuntimeException(" Erro ao criar um artigo com autor: " + e.getMessage());
-            }
-        });
+    @Override
+    public void excluirArtigoEAutor(final Artigo artigo) {
+        new TransactionTemplate(transactionManager)
+                .execute(status -> {
+                    try {
+                        artigoRepository.delete(artigo);
+                        autorRepository.delete(artigo.getAutor());
+                        return null;
+                    } catch (Exception e) {
+                        // Realiza o rollback caso ocorra um erro
+                        status.setRollbackOnly();
+
+                        throw new RuntimeException("Erro ao excluir um artigo ou autor: " + e.getMessage());
+                    }
+                });
     }
 }

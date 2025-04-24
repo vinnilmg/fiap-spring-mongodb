@@ -106,6 +106,11 @@ public class ArtigoController {
         artigoWithMongoTemplateService.deletarArtigo(codigo);
     }
 
+    @DeleteMapping("/deletar-com-autor")
+    public void deletarArtigoEAutor(@RequestBody final Artigo artigo) {
+        artigoWithRepositoryService.excluirArtigoEAutor(artigo);
+    }
+
     @GetMapping("/por-status-e-data-maior")
     public List<Artigo> findByStatusAndDataGreatherThan(
             @RequestParam("data") final LocalDateTime data,

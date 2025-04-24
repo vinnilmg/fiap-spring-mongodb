@@ -37,4 +37,6 @@ public interface ArtigoWithRepositoryService {
     Page<Artigo> findAllWithPaginationAndSort(Pageable pageable);
 
     ResponseEntity<?> criarArtigoComAutor(Artigo artigo, Autor autor);
+
+    void excluirArtigoEAutor(Artigo artigo);
 }
