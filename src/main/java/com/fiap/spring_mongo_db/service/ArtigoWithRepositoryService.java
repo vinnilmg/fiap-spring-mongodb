@@ -1,6 +1,7 @@
 package com.fiap.spring_mongo_db.service;
 
 import com.fiap.spring_mongo_db.model.Artigo;
+import com.fiap.spring_mongo_db.model.Autor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -34,4 +35,6 @@ public interface ArtigoWithRepositoryService {
     List<Artigo> findByStatusOrderByTituloDesc(Integer status);
 
     Page<Artigo> findAllWithPaginationAndSort(Pageable pageable);
+
+    ResponseEntity<?> criarArtigoComAutor(Artigo artigo, Autor autor);
 }

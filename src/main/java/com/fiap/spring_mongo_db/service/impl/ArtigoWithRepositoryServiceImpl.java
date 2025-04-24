@@ -1,6 +1,7 @@
 package com.fiap.spring_mongo_db.service.impl;
 
 import com.fiap.spring_mongo_db.model.Artigo;
+import com.fiap.spring_mongo_db.model.Autor;
 import com.fiap.spring_mongo_db.repository.ArtigoRepository;
 import com.fiap.spring_mongo_db.repository.AutorRepository;
 import com.fiap.spring_mongo_db.service.ArtigoWithRepositoryService;
@@ -10,10 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,13 +27,16 @@ import static java.util.Objects.nonNull;
 public class ArtigoWithRepositoryServiceImpl implements ArtigoWithRepositoryService {
     private final ArtigoRepository artigoRepository;
     private final AutorRepository autorRepository;
+    private final MongoTransactionManager transactionManager;
 
     public ArtigoWithRepositoryServiceImpl(
             ArtigoRepository artigoRepository,
-            AutorRepository autorRepository
+            AutorRepository autorRepository,
+            MongoTransactionManager transactionManager
     ) {
         this.artigoRepository = artigoRepository;
         this.autorRepository = autorRepository;
+        this.transactionManager = transactionManager;
     }
 
     @Override
@@ -161,5 +167,29 @@ public class ArtigoWithRepositoryServiceImpl implements ArtigoWithRepositoryServ
         final var sort = Sort.by("titulo").ascending();
         final var pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return artigoRepository.findAll(pageableWithSort);
+    }
+
+    @Override
+    public ResponseEntity<?> criarArtigoComAutor(final Artigo artigo, final Autor autor) {
+        final var transaction = new TransactionTemplate(transactionManager);
+
+        return transaction.execute(status -> {
+            try {
+                autorRepository.save(autor);
+
+                artigo.setData(LocalDateTime.now());
+                artigo.setAutor(autor);
+
+                artigoRepository.save(artigo);
+
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .build();
+            } catch (Exception e) {
+                // Realiza o rollback caso ocorra um erro
+                status.setRollbackOnly();
+
+                throw new RuntimeException(" Erro ao criar um artigo com autor: " + e.getMessage());
+            }
+        });
     }
 }

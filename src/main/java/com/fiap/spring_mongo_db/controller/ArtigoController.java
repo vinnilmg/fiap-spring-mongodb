@@ -1,6 +1,7 @@
 package com.fiap.spring_mongo_db.controller;
 
 import com.fiap.spring_mongo_db.model.Artigo;
+import com.fiap.spring_mongo_db.model.ArtigoComAutorRequest;
 import com.fiap.spring_mongo_db.model.ArtigoStatusCount;
 import com.fiap.spring_mongo_db.model.ArtigosPorAutorCount;
 import com.fiap.spring_mongo_db.service.ArtigoWithMongoTemplateService;
@@ -57,6 +58,11 @@ public class ArtigoController {
     @PostMapping("/criar")
     public ResponseEntity<?> criarArtigo(@RequestBody final Artigo artigo) {
         return artigoWithRepositoryService.criarArtigo(artigo);
+    }
+
+    @PostMapping("/criar-com-autor")
+    public ResponseEntity<?> criarArtigoComAutor(@RequestBody final ArtigoComAutorRequest request) {
+        return artigoWithRepositoryService.criarArtigoComAutor(request.artigo(), request.autor());
     }
 
     @GetMapping("/por-data")
